@@ -314,6 +314,11 @@ void DriverImpl::OnImageEvent(Spinnaker::ImagePtr imgPtr)
       is_readable(exposureTimeNode_) ? exposureTimeNode_->GetMax() : 0);
   // image class is decoupled from the image processor.
   Spinnaker::ImagePtr convertedImage = processor.Convert(imgPtr, imgPtr->GetPixelFormat());
+    // std::cout << imgPtr->GetPixelFormatName() << std::endl;
+  std::ostringstream filename;
+  filename << "Acquisition-";
+  filename << ".jpg";
+  convertedImage->Save(filename.str().c_str());
 #if 0
     std::cout << "got image: " << imgPtr->GetWidth() << "x"
               << imgPtr->GetHeight() << " stride: " << imgPtr->GetStride()
@@ -391,6 +396,7 @@ bool DriverImpl::startCamera(const Driver::Callback & cb)
     } else {
       setPixelFormat("BayerRG8");
       std::cerr << "WARNING: driver could not read pixel format!" << std::endl;
+      exit(0);
     }
     exposureTimeNode_ = nodeMap.GetNode("ExposureTime");
   } else {
@@ -420,6 +426,7 @@ bool DriverImpl::stopCamera()
 
 void DriverImpl::setPixelFormat(const std::string & pixFmt)
 {
+  std::cout << pixFmt << std::endl;
   pixelFormat_ = pixel_format::from_nodemap_string(pixFmt);
 }
 
