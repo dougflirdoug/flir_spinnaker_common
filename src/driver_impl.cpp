@@ -352,14 +352,12 @@ bool DriverImpl::initCamera(const std::string & serialNumber)
   if (camera_) {
     return false;
   }
-  for (size_t cam_idx = 0; cam_idx < cameraList_.GetSize(); cam_idx++) {
-    auto cam = cameraList_.GetByIndex(cam_idx);
-    const std::string sn = get_serial(cam);
-    if (sn == serialNumber) {
-      camera_ = cam;
-      camera_->Init();
-      break;
-    }
+  auto cam = cameraList_.GetBySerial(serialNumber);
+
+  if (cam.IsValid())
+  {
+    camera_ = cam;
+    camera_->Init();
   }
   return (camera_ != 0);
 }
