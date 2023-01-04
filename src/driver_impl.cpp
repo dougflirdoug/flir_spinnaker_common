@@ -312,7 +312,8 @@ void DriverImpl::OnImageEvent(Spinnaker::ImagePtr imgPtr)
     const int64_t stamp = chunk.GetTimestamp();
     const uint32_t maxExpTime = static_cast<uint32_t>(
       is_readable(exposureTimeNode_) ? exposureTimeNode_->GetMax() : 0);
-
+  // image class is decoupled from the image processor.
+  Spinnaker::ImagePtr convertedImage = processor.Convert(imgPtr, imgPtr->GetPixelFormat());
 #if 0
     std::cout << "got image: " << imgPtr->GetWidth() << "x"
               << imgPtr->GetHeight() << " stride: " << imgPtr->GetStride()
@@ -333,13 +334,13 @@ void DriverImpl::OnImageEvent(Spinnaker::ImagePtr imgPtr)
     const int16_t brightness =
       computeBrightness_
         ? compute_brightness(
-            pixelFormat_, static_cast<const uint8_t *>(imgPtr->GetData()),
+            pixelFormat_, static_cast<const uint8_t *>(convertedImage->GetData()),
             imgPtr->GetWidth(), imgPtr->GetHeight(), imgPtr->GetStride(),
             brightnessSkipPixels_)
         : -1;
     ImagePtr img(new Image(
       t, brightness, expTime, maxExpTime, gain, stamp, imgPtr->GetImageSize(),
-      imgPtr->GetImageStatus(), imgPtr->GetData(), imgPtr->GetWidth(),
+      imgPtr->GetImageStatus(), convertedImage->GetData(), imgPtr->GetWidth(),
       imgPtr->GetHeight(), imgPtr->GetStride(), imgPtr->GetBitsPerPixel(),
       imgPtr->GetNumChannels(), imgPtr->GetFrameID(), pixelFormat_));
     callback_(img);

@@ -83,6 +83,8 @@ private:
   bool debug_{false};
   bool computeBrightness_{false};
   int brightnessSkipPixels_{32};
+  // image object is decoupled from the image processor.
+  ImageProcessor processor;
   pixel_format::PixelFormat pixelFormat_{pixel_format::INVALID};
   Spinnaker::GenApi::CFloatPtr exposureTimeNode_;
   bool keepRunning_{true};
